@@ -15,7 +15,9 @@ def make_indoor_request(value):
 
 
 def write_to_file(date, time, weather):
-	with open('temp_data/' + date + '.csv', 'a', newline='') as csvfile:
+	relative_path = 'temp_data/' + date + '.csv'
+	global_path = os.path.abspath(relative_path)
+	with open(global_path, 'a', newline='') as csvfile:
 		csv_writer = csv.writer(csvfile, delimiter=',')
 		csv_writer.writerow([time, weather[0], weather[1], weather[2], weather[3]])
 
