@@ -14,6 +14,14 @@ def make_indoor_request(value):
 	return "http://{0}/{1}".format(config.esp_ip, value)
 
 
+def clean_temp(temp_str):
+	return int(temp_str[13:15])
+
+
+def clean_humidity(humidity_str):
+	return int(humidity_str[10:12])/100
+
+
 def write_to_file(date, time, weather):
 	path = config.data_path + date + '.csv'
 	print(path)
@@ -26,19 +34,15 @@ if __name__ == "__main__":
 
 	outdoor_weather = requests.get(make_outdoor_request()).json()
 
-	# indoor_temp = requests.get(make_indoor_request("temp")).json()
-
-	# print("Indoor temperature:")
-	# print(indoor_weather["temperature"])
-
-	# print("Indoor humidity:")
-	# print(indoor_weather["humidity"])
+	indoor_temp_str = requests.get(make_indoor_request("temp")).text
+	indoor_humidity_str = requests.get(make_indoor_request("humidity")).text
 
 	current_time = time.localtime()
 
 	date = time.strftime("%m_%d_%Y", current_time)
 	time = time.strftime("%H:%M")
-	weather = [outdoor_weather["currently"]["temperature"],outdoor_weather["currently"]["humidity"],82,49]
+	weather = [outdoor_weather["currently"]["temperature"],outdoor_weather["currently"]["humidity"],
+				clean_temp(indoor_temp_str),clean_humidity(indoor_humidity_str)]
 
 	print(date)
 	print(time)
